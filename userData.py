@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import *
 class UserData(QWidget):
     def __init__(self, parent):
         super().__init__()
+        parent.setGeometry(50, 50, 250, 750)
         self.createWidgets(parent)
 
     def createWidgets(self, parent):

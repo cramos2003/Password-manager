@@ -26,4 +26,9 @@ app = QApplication(sys.argv)
 app.setStyle('Fusion') # SETS COLOR SCHEME OF APPLICATION
 GUI = Window()
 GUI.show()
+
+with open('styles.qss', 'r') as f:
+    _style = f.read()
+    app.setStyleSheet(_style)
+
 app.exec()

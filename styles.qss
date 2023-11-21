@@ -1,0 +1,20 @@
+QLabel {
+    font-size:20px;
+    padding:20px;
+}
+
+QLineEdit {
+    font-size:20px;
+    padding:5px;
+    margin:5px;
+}
+
+QPushButton {
+    padding:5px;
+    margin:5px;
+    font-size:20px;
+}
+
+QListWidget {
+    font-size:20px;
+}

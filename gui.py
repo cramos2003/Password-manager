@@ -52,13 +52,14 @@ class Window(QMainWindow):
         # must validate login credentials are valid
         isValid = InputValidation.validate(self, user, pwd)
         if isValid == False:
-            self.loginScreen.header.setText('Invalid Login Credentials Were Input Please Input Correct Credentials')
+            self.loginScreen.header.setText('Invalid Login, Please Input Correct Credentials')
             return
         
         elif isValid == True:
                 self.displayUserData()
 
         else:
+            self.loginScreen.header.setText('An Unexpected Error Occured, Please try again')
             return
         
     def add(self):
@@ -70,7 +71,7 @@ class Window(QMainWindow):
 
         # if isValid is false change header to error message and propts user to retry
         if isValid == False:
-            self.addNewCreds.header.setText('Something Went Wrong, Please Fill All Input Elements')
+            self.addNewCreds.header.setText('Not All Textboxes Are Filled, Please Fill Out All Items To Continue')
             return
         # if isValid is true then input is saved to data file and displays user data screen with
         # updated file contents
@@ -82,6 +83,7 @@ class Window(QMainWindow):
         # stops funciton call due to other unexpected error with isValid not returning a true or
         # false value
         else:
+            self.addNewCreds.header.setText('An Unexpected Error Occured, Please Try Again')
             return
 
     def editCreds(self):
@@ -105,7 +107,7 @@ class Window(QMainWindow):
         isValid = InputValidation.validateNewCredentials(self, site, user, pwd)
 
         if isValid == False:
-            self.replaceCreds.header.setText('Something Went Wrong, Please Fill All Input Elements')
+            self.replaceCreds.header.setText('Not All Inputs Are Filled, Please Fill In Empty ELements')
             return
         
         elif isValid == True:
@@ -116,4 +118,5 @@ class Window(QMainWindow):
             self.displayUserData()
             
         else:
+            self.replaceCreds.header.setText('Unexpected Error Occured, Please Try Again')
             return

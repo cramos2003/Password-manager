@@ -4,11 +4,12 @@ class Login(QWidget):
     def __init__(self, parent):
         super().__init__()
         self.createWidgets(parent)
+        parent.setGeometry(150, 150, 250, 250)
 
     def createWidgets(self, parent):
         layout = QVBoxLayout()
 
-        self.header = QLabel("Welcome, Please Enter Login Credentials To View Saved Logins")
+        self.header = QLabel("Log In To View Saved Credentials")
         self.unInput = QLineEdit()
         self.unInput.setPlaceholderText('UserName')
         self.pwdInput = QLineEdit()
