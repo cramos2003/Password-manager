@@ -9,7 +9,7 @@ from login import Login
 from userData import UserData
 from addNewCreds import AddNewCreds
 from inputValidation import InputValidation
-from fileOperations import FileManipulation, InputFormatting
+from database import * # imports all database function querys
 
 class Window(QMainWindow):
     def __init__(self):
@@ -28,10 +28,22 @@ class Window(QMainWindow):
         self.userData.addCredsBtn.clicked.connect(self.displayAddCreds)
         self.userData.editCredBtn.clicked.connect(self.editCreds)
 
-        # these 2 lines retrieve and display data file contents within the list widget 
-        # to display all user credentials
-        df = FileManipulation.retrieveFileItems(self)
-        self.userData.mainList.addItems(df)
+        # query all elements that are active inside the database and display
+        # them within the widget
+        self.loadFromDB()
+
+    def loadFromDB(self):
+        data = Database.queryActive(self)
+
+        self.userData.view.setRowCount(len(data))
+
+        row = 0 # initial row index
+        for items in data.values(): # sets each column to respected value from data dict
+            self.userData.view.setItem(row, 0, QTableWidgetItem(items['appname']))
+            self.userData.view.setItem(row, 1, QTableWidgetItem(items['username']))
+            self.userData.view.setItem(row, 2, QTableWidgetItem(items['password']))
+            row += 1 # incremenets to next row
+        del data
 
     def displayAddCreds(self):
         self.setWindowTitle('Add Credentials')
@@ -73,11 +85,12 @@ class Window(QMainWindow):
         if isValid == False:
             self.addNewCreds.header.setText('Not All Textboxes Are Filled, Please Fill Out All Items To Continue')
             return
+        
         # if isValid is true then input is saved to data file and displays user data screen with
         # updated file contents
         elif isValid == True:
-            # add user inputs to file if valid
-            FileManipulation.saveItems(self, siteName, username, pwd)
+            # performs an insert query if credentials are valid, meaning isValid == True
+            Database.insertQuery(self, siteName, username, pwd)
             self.displayUserData()
         
         # stops funciton call due to other unexpected error with isValid not returning a true or
@@ -87,18 +100,24 @@ class Window(QMainWindow):
             return
 
     def editCreds(self):
-        # gets clicked list item for user to edit credentials for
-        self.credential = self.userData.mainList.currentItem().text()
+        # get row values from selected column element
+        row = self.userData.view.currentRow()
+        if row == -1:
+            self.userData.header.setText('Error Making Edit, No Item Selected. Try Again.')
+            return
 
-        # sections out credential to have only site user and password 
-        self.credential = InputFormatting.formatCredentials(self, self.credential)
+        self.items = list()
 
-        self.displayReplaceCreds()
+        for i in range(0, 3): # adds cell values from specified row that was selected
+            self.items.append(self.userData.view.item(row, i).text())
 
-        # sets input fields to previous credential values to be updated or changed
-        self.replaceCreds.websiteInput.setText(self.credential[0])
-        self.replaceCreds.unInput.setText(self.credential[1])
-        self.replaceCreds.pwdInput.setText(self.credential[2])
+        self.displayReplaceCreds() # displays form for replacing existing credentials
+
+        # set input fields to row values
+        self.replaceCreds.websiteInput.setText(self.items[0])
+        self.replaceCreds.unInput.setText(self.items[1])
+        self.replaceCreds.pwdInput.setText(self.items[2])
+        del row
 
     def confirmEdit(self):
         # pretty much the same as the add function inside the Window class (aka. add function above)
@@ -112,9 +131,11 @@ class Window(QMainWindow):
         
         elif isValid == True:
             # main difference in function opposed to add this operation finds and replaces
-            # the credentials within the data file
-            FileManipulation.replaceCredentials(self, self.credential[0], self.credential[1],
-                                                self.credential[2], site, user, pwd)
+            # the credentials within the database
+            Database.insertQuery(self, site, user, pwd)
+            Database.setInactiveQuery(self, self.items[0], self.items[1],
+                                    self.items[2]) # sets the id of prev credentials as inactive
+
             self.displayUserData()
             
         else:

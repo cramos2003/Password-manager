@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import *
+from PyQt6.QtWidgets import QHeaderView
 
 class UserData(QWidget):
     def __init__(self, parent):
@@ -9,13 +10,20 @@ class UserData(QWidget):
     def createWidgets(self, parent):
         layout = QVBoxLayout()
         
-        header = QLabel('Welcom, displayed below is all saved login credentials for your apps and sites')
-        self.mainList = QListWidget()
+        self.header = QLabel('Welcom, displayed below is all saved login credentials for your apps and sites')
+
+        self.view = QTableWidget()
+        self.view.setColumnCount(3)
+        self.view.setHorizontalHeaderLabels(['App', 'User Name', 'Password'])
+
+        for i in range(0, 3): # loop sets all columns to equal sizes of 175
+            self.view.setColumnWidth(i, 225)
+
         self.addCredsBtn = QPushButton('Add New Credentials')
         self.editCredBtn = QPushButton('Edit')
 
-        layout.addWidget(header)
-        layout.addWidget(self.mainList)
+        layout.addWidget(self.header)
+        layout.addWidget(self.view)
         layout.addWidget(self.addCredsBtn)
         layout.addWidget(self.editCredBtn)
 
